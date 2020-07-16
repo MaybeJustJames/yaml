@@ -28,6 +28,57 @@ module Yaml.Parser.Util exposing
 import Parser as P exposing ((|.), (|=))
 import Regex exposing (Regex)
 
+-- LOGGING
+log : String -> P.Parser a -> P.Parser a
+log message loggedParser =
+        P.succeed
+            (\source offsetBefore ->
+                let
+                    _ =
+                        Debug.log "+++++++++++++++++ starting" message
+                in
+                ( source, offsetBefore )
+            )
+            |= P.getSource
+            |= P.getOffset
+            |> P.andThen
+                (\( source, offsetBefore ) ->
+                    {- Kinda like that logging decoder from Thoughtbot:
+                       https://thoughtbot.com/blog/debugging-dom-event-handlers-in-elm
+
+                       Basically we run `Parser.run` ourselves so that we can
+                       get at the context and say something more meaningful
+                       about the failure if it happens.
+                    -}
+                    let
+                        remainingSource =
+                            String.dropLeft offsetBefore source
+                                |> Debug.log "yet to parse  "
+                    in
+                    let
+                        parseResult =
+                            -- the side-effecty part; this might log lies
+                            P.run
+                                (P.succeed
+                                    (\parseResult_ innerOffset ->
+                                        let
+                                            _ =
+                                                Debug.log "chomped string" (String.left innerOffset remainingSource)
+                                        in
+                                        parseResult_
+                                    )
+                                    |= loggedParser
+                                    |= P.getOffset
+                                )
+                                remainingSource
+                                |> Debug.log "parse result  "
+                    in
+                    let
+                        _ =
+                            Debug.log "----------------- ending  " message
+                    in
+                    loggedParser
+                )
 
 
 -- QUESTIONS
