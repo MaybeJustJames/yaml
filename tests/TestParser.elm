@@ -50,7 +50,7 @@ suite =
         , Test.test "a single-quoted string" <|
             \_ ->
                 -- TODO is this right?
-                expectValue """'hey 
+                expectValue """'hey
           i am a 
 
           parser'""" <|
@@ -60,8 +60,8 @@ suite =
                 expectErr "'hello"
         , Test.test "a double-quoted string" <|
             \_ ->
-                expectValue """"hey 
-          i am a 
+                expectValue """"hey
+          i am a
           parser" """ <|
                     Ast.String_ "hey i am a parser"
         , Test.test "a double-quoted string with no closing quote" <|
@@ -70,6 +70,9 @@ suite =
         , Test.test "a string containing a colon" <|
             \_ ->
                 expectValue ":!" <| Ast.String_ ":!"
+        , Test.test "another string containing a colon" <|
+            \_ ->
+                expectValue "a:b" <| Ast.String_ "a:b"
         , Test.test "a single-line string" <|
             \_ ->
                 expectValue "hey i am a parser" <|
@@ -365,7 +368,7 @@ suite =
             \_ ->
                 expectValue
                     """
-            aaa:1# First
+            aaa: 1# First
             bbb:  2.0 # A comment
             ccc:   3  #   Another comment
             ddd:    4.5  #
@@ -381,7 +384,7 @@ suite =
         , Test.test "a record on a single line with a quoted value" <|
             \_ ->
                 expectValue
-                    "aaa:'aaa'"
+                    "aaa: 'aaa'"
                 <|
                     Ast.Record_ (Dict.singleton "aaa" <| Ast.String_ "aaa")
         , Test.fuzz int "a record on a single line with an integer value" <|
