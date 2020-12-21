@@ -69,6 +69,8 @@ suite =
                 \_ -> given "true" Yaml.string |> expectFail "Expected string, got: True (bool)"
             , Test.fuzz (Fuzz.map sanitiseString string) "random string" <|
                 \s -> given s Yaml.string |> expectEqual (String.trim s)
+            , Test.test "string continaing a colon with no trailing space" <|
+                \_ -> given "a:b" Yaml.string |> expectEqual "a:b"
             ]
         , Test.describe "boolean values"
             [ Test.test "boolean true" <|
