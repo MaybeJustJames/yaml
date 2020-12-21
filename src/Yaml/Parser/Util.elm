@@ -166,9 +166,9 @@ whitespace =
                 [ P.succeed (P.Loop ())
                     |. comment
                 , P.succeed (P.Loop ())
-                    |. P.chompIf isSpace
+                    |. P.symbol " "
                 , P.succeed (P.Loop ())
-                    |. P.chompIf isNewLine
+                    |. P.symbol "\n"
                 , P.succeed (P.Done ())
                 ]
     in

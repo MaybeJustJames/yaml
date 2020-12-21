@@ -334,7 +334,11 @@ quotedString indent =
 recordProperty : Int -> String -> P.Parser Ast.Value
 recordProperty indent name =
     P.succeed (record indent name)
-        |. P.chompIf U.isColon
+        |. P.oneOf
+            [ P.token ": "
+            , P.token ":\n"
+            , P.backtrackable (P.token ":") |. P.end
+            ]
         |> P.andThen identity
 
 
@@ -478,6 +482,7 @@ recordInlinePropertyNameString =
     -- TODO allow numeric name
     P.succeed ()
         |. P.chompWhile (U.neither3 U.isColon U.isComma U.isRecordEnd)
+        |. U.whitespace
         |> P.getChompedString
         |> P.map String.trim
 
