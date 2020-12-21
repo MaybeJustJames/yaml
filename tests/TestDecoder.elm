@@ -199,6 +199,8 @@ suite =
         , Test.describe "lists"
             [ Test.test "empty list" <|
                 \_ -> given "[]" (Yaml.list Yaml.null) |> expectEqual []
+            , Test.test "decode nothing into an empty list" <|
+                \_ -> given "" (Yaml.list Yaml.int) |> expectEqual []
             , Test.fuzz (list int) "list of integers" <|
                 \xs ->
                     let
