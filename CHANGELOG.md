@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## Fixed
 - A bug causing strings containing a colon to be interpreted as a mapping.
+- A bug causing the list decoder to fail on empty strings.
 
 ## [1.1.0]
 ### Added
