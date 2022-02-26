@@ -367,7 +367,7 @@ record indent property =
         confirmed value_ =
             P.succeed identity
                 |= P.loop [ ( property, value_ ) ] (recordStep indent)
-                |> P.andThen duplicatedPropertiesCheck
+                |> P.andThen duplicatedPropertyKeysCheck
                 |> P.map (Ast.Record_ << Dict.fromList)
     in
     recordElementValue indent
@@ -468,17 +468,17 @@ recordInlineStepOne =
         , P.succeed identity
             |= P.loop [] recordInlineStep
         ]
-    |> P.andThen duplicatedPropertiesCheck
+    |> P.andThen duplicatedPropertyKeysCheck
 
-duplicatedPropertiesCheck : List Ast.Property -> P.Parser (List Ast.Property)
-duplicatedPropertiesCheck properties =
-    if duplicatedKeysProperties properties then
+duplicatedPropertyKeysCheck : List Ast.Property -> P.Parser (List Ast.Property)
+duplicatedPropertyKeysCheck properties =
+    if hasDuplicatedProperyKeys properties then
         P.problem "Non-unique keys in record"
     else
         P.succeed properties
 
-duplicatedKeysProperties : List Ast.Property -> Bool
-duplicatedKeysProperties properties =
+hasDuplicatedProperyKeys : List Ast.Property -> Bool
+hasDuplicatedProperyKeys properties =
     let
         keys = properties |> List.map Tuple.first
 
