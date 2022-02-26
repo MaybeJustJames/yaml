@@ -55,7 +55,7 @@ Say you have some YAML which looks like this:
 to decode this, you could write
 
 ```elm
-import Yaml.Decode (..)
+import Yaml.Decode exposing (..)
 
 type alias Woman =
   { name : String
@@ -86,7 +86,7 @@ fromString
 Say you are manipulating Github Actions configuration files which you might model like so:
 
 ```elm
-import Yaml.Encode (..)
+import Yaml.Encode exposing (..)
 
 -- Top-level structure
 type alias GHActions =
