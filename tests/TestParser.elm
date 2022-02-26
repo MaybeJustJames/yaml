@@ -529,6 +529,25 @@ suite =
                                 )
                             )
                         )
+        , Test.test "an inline record with 2 duplicated keys" <|
+            \_ ->
+                expectErr
+                    """aaa: aaa
+aaa: bbb"""
+        , Test.test "a record with 2 duplicated keys" <|
+            \_ ->
+                expectErr
+                    """
+                aaa:
+                    key1: value1
+                    key1: value2
+                """
+         , Test.test "an inline record with 2 duplicated keys, version 2" <|
+            \_ ->
+                expectErr
+                    """
+                aaa: { key1: value1, key1: value2 }
+                """
 
         -- TODO: This is temporarily removed because it is a valid test case that should pass
         -- , Test.test "weird colon record" <|

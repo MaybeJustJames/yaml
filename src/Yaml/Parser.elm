@@ -7,6 +7,7 @@ import Yaml.Parser.Ast as Ast
 import Yaml.Parser.Document
 import Yaml.Parser.String
 import Yaml.Parser.Util as U
+import Set
 
 
 {-| -}
@@ -364,8 +365,10 @@ record : Int -> String -> P.Parser Ast.Value
 record indent property =
     let
         confirmed value_ =
-            P.succeed (Ast.Record_ << Dict.fromList)
+            P.succeed identity
                 |= P.loop [ ( property, value_ ) ] (recordStep indent)
+                |> P.andThen duplicatedPropertiesCheck
+                |> P.map (Ast.Record_ << Dict.fromList)
     in
     recordElementValue indent
         |> P.andThen confirmed
@@ -465,6 +468,23 @@ recordInlineStepOne =
         , P.succeed identity
             |= P.loop [] recordInlineStep
         ]
+    |> P.andThen duplicatedPropertiesCheck
+
+duplicatedPropertiesCheck : List Ast.Property -> P.Parser (List Ast.Property)
+duplicatedPropertiesCheck properties =
+    if duplicatedKeysProperties properties then
+        P.problem "Non-unique keys in record"
+    else
+        P.succeed properties
+
+duplicatedKeysProperties : List Ast.Property -> Bool
+duplicatedKeysProperties properties =
+    let
+        keys = properties |> List.map Tuple.first
+
+        uniqueKeys = Set.fromList keys
+    in
+    Set.size uniqueKeys /= List.length keys
 
 
 recordInlineStep : List Ast.Property -> P.Parser (P.Step (List Ast.Property) (List Ast.Property))
