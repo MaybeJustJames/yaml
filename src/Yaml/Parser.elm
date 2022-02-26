@@ -470,6 +470,7 @@ recordInlineStepOne =
         ]
     |> P.andThen duplicatedPropertyKeysCheck
 
+-- YAML mappings require key uniqueness (https://yaml.org/spec/1.2.2/#node-comparison)
 duplicatedPropertyKeysCheck : List Ast.Property -> P.Parser (List Ast.Property)
 duplicatedPropertyKeysCheck properties =
     if hasDuplicatedProperyKeys properties then
