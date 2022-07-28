@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- Error message for duplicated record keys now lists the duplicated keys.
+- Error message for duplicated record keys now lists the duplicated keys ([#27](https://github.com/MaybeJustJames/yaml/pull/27)).
 
 ## [2.1.1]
 ### Fixed
