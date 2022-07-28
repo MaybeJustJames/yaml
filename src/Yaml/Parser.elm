@@ -2,12 +2,11 @@ module Yaml.Parser exposing (Value, fromString, parser, toString)
 
 import Dict exposing (Dict)
 import Parser as P exposing ((|.), (|=))
-import Regex exposing (Regex)
+import Set exposing (Set)
 import Yaml.Parser.Ast as Ast
 import Yaml.Parser.Document
 import Yaml.Parser.String
 import Yaml.Parser.Util as U
-import Set
 
 
 {-| -}
@@ -468,24 +467,49 @@ recordInlineStepOne =
         , P.succeed identity
             |= P.loop [] recordInlineStep
         ]
-    |> P.andThen duplicatedPropertyKeysCheck
+        |> P.andThen duplicatedPropertyKeysCheck
 
--- YAML mappings require key uniqueness (https://yaml.org/spec/1.2.2/#node-comparison)
+
+{-| YAML mappings require key uniqueness (<https://yaml.org/spec/1.2.2/#node-comparison>)
+-}
 duplicatedPropertyKeysCheck : List Ast.Property -> P.Parser (List Ast.Property)
 duplicatedPropertyKeysCheck properties =
-    if hasDuplicatedProperyKeys properties then
-        P.problem "Non-unique keys in record"
-    else
+    let
+        duplicates : List String
+        duplicates =
+            duplicatedPropertyKeys properties
+    in
+    if List.length duplicates == 0 then
         P.succeed properties
 
-hasDuplicatedProperyKeys : List Ast.Property -> Bool
-hasDuplicatedProperyKeys properties =
-    let
-        keys = properties |> List.map Tuple.first
+    else
+        P.problem ("Non-unique keys in record: " ++ String.join ", " duplicates)
 
-        uniqueKeys = Set.fromList keys
+
+duplicatedPropertyKeys : List Ast.Property -> List String
+duplicatedPropertyKeys properties =
+    let
+        keys : List String
+        keys =
+            List.map Tuple.first properties
+
+        duplicated : ( Set String, Set String )
+        duplicated =
+            List.foldr
+                (\x ( obs, dup ) ->
+                    if Set.member x obs then
+                        -- if this item has already been observed, add to duplicates
+                        ( obs, Set.insert x dup )
+
+                    else
+                        -- otherwise add to observed items
+                        ( Set.insert x obs, dup )
+                )
+                ( Set.empty, Set.empty )
+                keys
     in
-    Set.size uniqueKeys /= List.length keys
+    Tuple.second duplicated
+        |> Set.toList
 
 
 recordInlineStep : List Ast.Property -> P.Parser (P.Step (List Ast.Property) (List Ast.Property))
