@@ -2,6 +2,7 @@ module TestEncoder exposing (suite)
 
 import Dict
 import Expect
+import Format exposing (formatFloat, formatFloatOutput)
 import Fuzz exposing (bool, float, int, list, map2, string)
 import Test
 import Yaml.Decode as Decode
@@ -147,7 +148,7 @@ suite =
                 \x ->
                     Expect.equal
                         ("{x: "
-                            ++ String.fromFloat x
+                            ++ formatFloatOutput x
                             ++ "}"
                         )
                         (Encode.toString
@@ -321,7 +322,7 @@ suite =
                             pairs
                                 |> List.map
                                     (\( key, val ) ->
-                                        quote key ++ ": " ++ String.fromFloat val
+                                        quote key ++ ": " ++ formatFloatOutput val
                                     )
                                 |> String.join "\n"
 

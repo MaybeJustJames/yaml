@@ -45,6 +45,18 @@ fromString string =
         "false" ->
             Bool_ False
 
+        ".nan" ->
+            Float_ (0 / 0)
+
+        ".inf" ->
+            Float_ (1 / 0)
+
+        "+.inf" ->
+            Float_ (1 / 0)
+
+        "-.inf" ->
+            Float_ (-1 / 0)
+
         other ->
             case String.toInt other of
                 Just int ->

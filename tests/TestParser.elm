@@ -2,6 +2,8 @@ module TestParser exposing (suite)
 
 import Dict
 import Expect
+import Expectations exposing (expectCloseTo)
+import Format exposing (formatFloat)
 import Fuzz exposing (float, int)
 import Parser as P
 import Test
@@ -43,8 +45,11 @@ suite =
                     (if x == 0.0 then
                         "0.0"
 
+                     else if isNaN x then
+                        ".NaN"
+
                      else
-                        String.fromFloat x
+                        formatFloat x
                     )
                 <|
                     Ast.Float_ x
@@ -542,7 +547,7 @@ aaa: bbb"""
                     key1: value1
                     key1: value2
                 """
-         , Test.test "an inline record with 2 duplicated keys, version 2" <|
+        , Test.test "an inline record with 2 duplicated keys, version 2" <|
             \_ ->
                 expectErr
                     """
@@ -564,8 +569,12 @@ expectRawAst subject expected =
 
 expectValue : String -> Ast.Value -> Expect.Expectation
 expectValue subject expected =
-    Parser.fromString subject
-        |> Expect.equal (Ok expected)
+    case ( Parser.fromString subject, expected ) of
+        ( Ok (Ast.Float_ got), Ast.Float_ want ) ->
+            expectCloseTo got want
+
+        ( got, _ ) ->
+            Expect.equal got (Ok expected)
 
 
 expectErr : String -> Expect.Expectation
