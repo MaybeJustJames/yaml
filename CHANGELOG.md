@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Updated `elm-explorations/test` to version 2 ([#30](https://github.com/MaybeJustJames/yaml/pull/30)
+- Incorrect encoding of empty collection values in records ([#33](https://github.com/MaybeJustJames/yaml/pull/33))
 
 ## [2.1.2]
 ### Changed
