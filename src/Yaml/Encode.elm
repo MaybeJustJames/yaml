@@ -461,9 +461,19 @@ encodeRecord state r =
         recordElement ( key, val ) =
             let
                 newState =
-                    { state | prefix = True, col = state.col + state.indent }
+                    { state | prefix = False, col = state.col + state.indent }
+
+                encodedValue =
+                    internalConvertToString newState val
             in
-            key ++ ":" ++ internalConvertToString newState val
+            key
+                ++ ":"
+                ++ (if String.startsWith "\n" encodedValue then
+                        encodedValue
+
+                    else
+                        " " ++ encodedValue
+                   )
 
         prefix : String
         prefix =

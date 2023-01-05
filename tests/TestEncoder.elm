@@ -130,6 +130,12 @@ suite =
                                 [ [ [ 1, 2 ] ], [ [ 3, 4 ] ] ]
                             )
                         )
+            , Test.test "Empty sub-list" <|
+                \_ ->
+                    Expect.equal "test: []"
+                        (Encode.toString 2
+                            (Encode.record [ ( "test", Encode.list Encode.int [] ) ])
+                        )
             ]
         , Test.describe "Dicts"
             [ Test.test "Empty dict" <|
@@ -351,6 +357,12 @@ suite =
                     in
                     Expect.equal expected
                         (Encode.toString 2 encoder)
+            , Test.test "Empty sub-record" <|
+                \_ ->
+                    Expect.equal "test: {}"
+                        (Encode.toString 2
+                            (Encode.record [ ( "test", Encode.record [] ) ])
+                        )
             ]
         , Test.describe "A Document"
             [ Test.test "A document containing an int" <|
