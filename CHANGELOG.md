@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Bumped Github action dependency versions ([#34](https://github.com/MaybeJustJames/yaml/pull/34))
+- Fix list of record encoding bug #29 ([#35](https://github.com/MaybeJustJames/yaml/pull/35))
 
 ## [2.1.3]
 ### Fixed
