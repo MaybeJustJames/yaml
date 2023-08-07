@@ -50,7 +50,7 @@ suite =
                 \xs ->
                     let
                         expected =
-                            "[" ++ String.join "," (xs |> List.map String.fromInt) ++ "]"
+                            "[" ++ String.join ", " (xs |> List.map String.fromInt) ++ "]"
                     in
                     Expect.equal expected
                         (Encode.toString 0 (Encode.list Encode.int xs))
@@ -74,7 +74,7 @@ suite =
                 \_ ->
                     let
                         expected =
-                            "-\n  - 1\n  - 2\n-\n  - 3\n  - 4\n-\n  - 5\n  - 6"
+                            "- - 1\n  - 2\n- - 3\n  - 4\n- - 5\n  - 6"
 
                         encoder =
                             Encode.list (Encode.list Encode.int)
@@ -89,7 +89,7 @@ suite =
                 \_ ->
                     let
                         expected =
-                            "-\n     - 1\n     - 2\n-\n     - 3\n     - 4\n-\n     - 5\n     - 6"
+                            "-    -    1\n     -    2\n-    -    3\n     -    4\n-    -    5\n     -    6"
 
                         encoder =
                             Encode.list (Encode.list Encode.int)
@@ -104,7 +104,7 @@ suite =
                 \_ ->
                     let
                         expected =
-                            "-\n   - 1\n   - 2\n-\n   - 3\n   - 4\n-\n   - 5\n   - 6"
+                            "-  -  1\n   -  2\n-  -  3\n   -  4\n-  -  5\n   -  6"
 
                         encoder =
                             Encode.list (Encode.list Encode.int)
@@ -119,7 +119,7 @@ suite =
                 \_ ->
                     let
                         expected =
-                            "-\n   -\n      - 1\n      - 2\n-\n   -\n      - 3\n      - 4"
+                            "-  -  -  1\n      -  2\n-  -  -  3\n      -  4"
 
                         encoder =
                             Encode.list <| Encode.list <| Encode.list Encode.int
@@ -135,6 +135,20 @@ suite =
                     Expect.equal "test: []"
                         (Encode.toString 2
                             (Encode.record [ ( "test", Encode.list Encode.int [] ) ])
+                        )
+            , Test.test "List of records" <|
+                \_ ->
+                    let
+                        rencoder r =
+                            Encode.record [ ( "a", Encode.int r.a ), ( "b", Encode.int r.b ) ]
+                    in
+                    Expect.equal "- a: 1\n  b: 2\n- a: 42\n  b: 24"
+                        (Encode.toString 2
+                            (Encode.list rencoder
+                                [ { a = 1, b = 2 }
+                                , { a = 42, b = 24 }
+                                ]
+                            )
                         )
             ]
         , Test.describe "Dicts"
@@ -277,6 +291,17 @@ suite =
                                     ]
                             )
                         )
+            , Test.test "Inline dict of lists" <|
+                \_ ->
+                    Expect.equal "[{a: 1, b: 2, c: 3}, {e: 21, g: 42, z: 101}]"
+                        (Encode.toString 0
+                            (Encode.list
+                                (Encode.dict identity Encode.int)
+                                [ Dict.fromList [ ( "a", 1 ), ( "b", 2 ), ( "c", 3 ) ]
+                                , Dict.fromList [ ( "e", 21 ), ( "g", 42 ), ( "z", 101 ) ]
+                                ]
+                            )
+                        )
             ]
         , Test.describe "Records"
             [ Test.test "Empty record" <|
@@ -363,6 +388,23 @@ suite =
                         (Encode.toString 2
                             (Encode.record [ ( "test", Encode.record [] ) ])
                         )
+            , Test.test "Inline record of lists" <|
+                \_ ->
+                    let
+                        rencoder r =
+                            Encode.record
+                                [ ( "a", Encode.int r.a )
+                                , ( "b", Encode.int r.b )
+                                , ( "c", Encode.int r.c )
+                                ]
+                    in
+                    Expect.equal "[{a: 1, b: 2, c: 3}, {a: 21, b: 42, c: 101}]"
+                        (Encode.toString 0
+                            (Encode.list
+                                rencoder
+                                [ { a = 1, b = 2, c = 3 }, { a = 21, b = 42, c = 101 } ]
+                            )
+                        )
             ]
         , Test.describe "A Document"
             [ Test.test "A document containing an int" <|
@@ -385,24 +427,32 @@ suite =
             , Test.test "A list roundtrip" <|
                 \_ ->
                     let
+                        data : String
+                        data =
+                            "[1, 3, 42, 11]"
+
                         mylist : Maybe Decode.Value
                         mylist =
-                            Decode.fromString Decode.value "[1, 3, 42, 11]"
+                            Decode.fromString Decode.value data
                                 |> Result.toMaybe
                     in
                     Expect.equal
-                        (Just "[1,3,42,11]")
+                        (Just data)
                         (Maybe.map (\val -> Encode.toString 0 (Encode.value val)) mylist)
             , Test.test "A record containing lists roundtrip" <|
                 \_ ->
                     let
+                        data : String
+                        data =
+                            "{a: [1], b: [2]}"
+
                         myrec : Maybe Decode.Value
                         myrec =
-                            Decode.fromString Decode.value "{a: [1], b: [2]}"
+                            Decode.fromString Decode.value data
                                 |> Result.toMaybe
                     in
                     Expect.equal
-                        (Just "{a: [1],b: [2]}")
+                        (Just data)
                         (Maybe.map (\val -> Encode.toString 0 (Encode.value val)) myrec)
             ]
         ]
