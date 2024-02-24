@@ -16,6 +16,8 @@ module Yaml.Parser.Util exposing
     , multiline
     , neither
     , neither3
+    , postProcessFoldedString
+    , postProcessLiteralString
     , postProcessString
     , remaining
     , singleQuotes
@@ -196,11 +198,14 @@ multilineStep indent lines =
     let
         multilineString : List String -> String
         multilineString lines_ =
-            String.join " " (List.reverse lines_)
+            String.join "\n" (List.reverse lines_)
 
-        conclusion line indent_ =
+        conclusion line emptyLineCount indent_ =
             if indent_ > indent then
-                P.Loop (line :: lines)
+                P.Loop
+                    ((line ++ String.repeat emptyLineCount "\n")
+                        :: lines
+                    )
 
             else
                 P.Done (multilineString (line :: lines))
@@ -210,8 +215,24 @@ multilineStep indent lines =
             |= characters (not << isNewLine)
             |. P.chompIf isNewLine
             |. spaces
+            |= emptyLines
             |= P.getCol
         , P.succeed (P.Done <| multilineString lines)
+        ]
+
+
+emptyLines : P.Parser Int
+emptyLines =
+    P.loop 0 emptyLinesStep
+
+
+emptyLinesStep : Int -> P.Parser (P.Step Int Int)
+emptyLinesStep count =
+    P.oneOf
+        [ P.succeed (P.Loop (count + 1))
+            |. P.chompIf isNewLine
+            |. spaces
+        , P.succeed (P.Done count)
         ]
 
 
@@ -282,6 +303,17 @@ remaining =
 
 postProcessString : String -> String
 postProcessString str =
+    if isLiteralString str then
+        postProcessLiteralString str
+
+    else
+        str
+            |> String.replace "\n" " "
+            |> postProcessFoldedString
+
+
+postProcessFoldedString : String -> String
+postProcessFoldedString str =
     let
         regexFromString : String -> Regex
         regexFromString =
@@ -296,6 +328,62 @@ postProcessString str =
                 else
                     " "
             )
+
+
+isLiteralString : String -> Bool
+isLiteralString str =
+    str
+        |> String.split "\n"
+        |> List.head
+        |> (==) (Just "|")
+
+
+postProcessLiteralString : String -> String
+postProcessLiteralString str =
+    case String.left 2 str of
+        "|\n" ->
+            let
+                content =
+                    String.dropLeft 2 str
+            in
+            content
+                |> countLeadingSpacesInMultiline
+                |> removeLeadingSpaces content
+
+        _ ->
+            str
+
+
+removeLeadingSpaces : String -> Int -> String
+removeLeadingSpaces str count =
+    str
+        |> String.split "\n"
+        |> List.map (String.dropLeft count)
+        |> String.join "\n"
+
+
+countLeadingSpacesInMultiline : String -> Int
+countLeadingSpacesInMultiline str =
+    str
+        |> String.split "\n"
+        |> List.head
+        |> Maybe.withDefault ""
+        |> countLeadingSpacesInString
+
+
+countLeadingSpacesInString : String -> Int
+countLeadingSpacesInString str =
+    let
+        countHelper : String -> Int -> Int
+        countHelper s count =
+            case String.uncons s of
+                Just ( ' ', rest ) ->
+                    countHelper rest (count + 1)
+
+                _ ->
+                    count
+    in
+    countHelper str 0
 
 
 

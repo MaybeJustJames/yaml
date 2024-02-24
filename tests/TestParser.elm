@@ -59,7 +59,6 @@ suite =
                     Ast.Float_ x
         , Test.test "a single-quoted string" <|
             \_ ->
-                -- TODO is this right?
                 expectValue """'hey
           i am a 
 
@@ -109,6 +108,33 @@ suite =
             """
                 <|
                     Ast.String_ "how does one teach self-respect? how does one teach curiousity? if you have the answers, call me"
+        , Test.test
+            "a literal multi-line string"
+          <|
+            \_ ->
+                expectValue "|\n literal\n \ttext" <|
+                    Ast.String_ "literal\n\ttext"
+        , Test.test "a record with literal string" <|
+            \_ ->
+                expectValue
+                    """
+            aaa: |
+                hello
+                world
+            """
+                <|
+                    Ast.Record_ (Dict.fromList [ ( "aaa", Ast.String_ "hello\nworld" ) ])
+        , Test.test "a record with literal string with empty lines" <|
+            \_ ->
+                expectValue
+                    """
+            aaa: |
+                hello
+
+                world
+            """
+                <|
+                    Ast.Record_ (Dict.fromList [ ( "aaa", Ast.String_ "hello\n\nworld" ) ])
         , Test.test "a empty inline list" <|
             \_ ->
                 expectValue "[]" <|

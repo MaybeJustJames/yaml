@@ -340,7 +340,7 @@ quotedString indent =
         withQuote quote =
             P.oneOf
                 [ recordProperty indent quote
-                , P.succeed (Ast.String_ <| U.postProcessString quote)
+                , P.succeed (Ast.String_ <| U.postProcessFoldedString quote)
                 ]
     in
     P.succeed identity
