@@ -177,6 +177,10 @@ suite =
                     Ast.List_ [ Ast.String_ "aaa", Ast.List_ [ Ast.String_ "bbb", Ast.String_ "aaa", Ast.String_ "ccc" ], Ast.String_ "ccc" ]
         , Test.test "an inline list with a record inside" <|
             \_ ->
+                expectValue "[ '  hello  world  ' : 3 ]" <|
+                    Ast.List_ [ Ast.Record_ (Dict.fromList [ ( "  hello  world  ", Ast.Int_ 3 ) ]) ]
+        , Test.test "an inline list with an inline record inside" <|
+            \_ ->
                 expectValue "[ aaa, {bbb: bbb, aaa: aaa, ccc: ccc}, ccc ]" <|
                     Ast.List_ [ Ast.String_ "aaa", Ast.Record_ (Dict.fromList [ ( "bbb", Ast.String_ "bbb" ), ( "aaa", Ast.String_ "aaa" ), ( "ccc", Ast.String_ "ccc" ) ]), Ast.String_ "ccc" ]
         , Test.test "an inline record" <|
