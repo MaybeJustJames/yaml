@@ -557,11 +557,10 @@ aaa: bbb"""
                     """
                 aaa: { key1: value1, key1: value2 }
                 """
-
-        -- TODO: This is temporarily removed because it is a valid test case that should pass
-        -- , Test.test "weird colon record" <|
-        --     \_ ->
-        --       expectValue "::" <| Ast.Record_ (Dict.singleton ":" Ast.Null_)
+        , Test.test "colon as key" <|
+            \_ ->
+                expectValue "::" <|
+                    Ast.Record_ (Dict.singleton ":" Ast.Null_)
         ]
 
 
@@ -573,12 +572,12 @@ expectRawAst subject expected =
 
 expectValue : String -> Ast.Value -> Expect.Expectation
 expectValue subject expected =
-    case ( Parser.fromString subject, expected ) of
-        ( Ok (Ast.Float_ got), Ast.Float_ want ) ->
-            expectCloseTo got want
+    case (Parser.fromString subject, expected) of
+        (Ok got, _) ->
+            Expect.equal got expected
 
-        ( got, _ ) ->
-            Expect.equal got (Ok expected)
+        (Err err, _) ->
+            Expect.fail err
 
 
 expectErr : String -> Expect.Expectation
