@@ -4,8 +4,8 @@
 
 Convert between type-safe Elm values and [YAML](https://yaml.org).
 
-This is _temporarily_ forked from
-[terezka/yaml](https://package.elm-lang.org/packages/terezka/yaml/latest/) while that package is dormant.
+This is forked from the wonderful
+[terezka/yaml](https://package.elm-lang.org/packages/terezka/yaml/latest/).
 
 ## Install
 
