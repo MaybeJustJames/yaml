@@ -299,7 +299,9 @@ recordOrString indent indent_ =
     let
         withString string =
             P.oneOf
-                [ P.succeed (Ast.fromString string)
+                [ P.succeed (Ast.Record_ (Dict.singleton ":" Ast.Null_))
+                    |. P.end
+                , P.succeed (Ast.fromString string)
                     |. P.end
                 , recordProperty indent_ string
                 , P.succeed (addRemaining string)
@@ -312,24 +314,13 @@ recordOrString indent indent_ =
                 ]
 
         addRemaining string remaining =
-            Ast.fromString <| U.postProcessString (removeComment string ++ remaining)
-
-        removeComment string =
-            string
-                |> String.split "#"
-                |> List.head
-                |> Maybe.withDefault ""
+            Ast.String_ (string ++ remaining)
     in
     P.oneOf
-        [ quotedString indent_
+        [ P.succeed Ast.Null_
+            |. P.end
         , P.succeed identity
-            |. P.chompIf (U.neither U.isColon U.isNewLine)
-            |. P.chompWhile (U.neither U.isColon U.isNewLine)
-            |> P.getChompedString
-            |> P.andThen withString
-        , P.succeed identity
-            |. P.chompWhile U.isColon
-            |> P.getChompedString
+            |= U.characters (not << U.isColon)
             |> P.andThen withString
         ]
 
