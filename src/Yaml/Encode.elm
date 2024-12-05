@@ -4,6 +4,7 @@ module Yaml.Encode exposing
     , string, int, float, bool, null, value
     , list, record, dict
     , document
+    , safeEncodeString, safeEncodeKey, safeEncodeMultilineString
     )
 
 {-| Turn Elm values into [YAML](https://yaml.org). You use `Yaml.Encode` in a very similar
@@ -44,6 +45,43 @@ have a look at
 
 import Dict exposing (Dict)
 import Yaml.Parser.Ast exposing (Value(..))
+import String.Extra exposing (quote)
+
+
+safeEncodeString : String -> Encoder
+safeEncodeString s =
+    if String.contains "\n" s then
+        safeEncodeMultilineString s
+    else
+        encodeSpecialChars s
+            |> encodeQuotes
+            |> quote
+            |> string
+
+encodeQuotes : String -> String
+encodeQuotes s =
+    if String.contains "\"" s then
+        String.replace "\"" "\\\"" s
+    else
+        s
+
+encodeSpecialChars : String -> String
+encodeSpecialChars s =
+    if String.startsWith "*" s || String.startsWith "!" s || String.startsWith "&" s then
+        "\\" ++ s
+    else
+        s
+
+safeEncodeMultilineString : String -> Encoder
+safeEncodeMultilineString s =
+    string (String.join "\n" (List.map encodeQuotes (String.split "\n" s)))
+
+safeEncodeKey : String -> Encoder
+safeEncodeKey key =
+    if String.contains ":" key || String.contains " " key then
+        string (quote key)
+    else
+        string key
 
 
 {-| Keep track of Encoder state while encoding
