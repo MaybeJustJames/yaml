@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Added support for literal multi-line strings ([#36](https://github.com/MaybeJustJames/yaml/pull/36))
+- Added support for literal multi-line strings ([#36](https://github.com/MaybeJustJames/yaml/pull/36) by [lovebug356](https://github.com/lovebug356))
 
 ## [2.1.4]
 ### Changed
