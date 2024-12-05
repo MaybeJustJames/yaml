@@ -551,10 +551,8 @@ recordInlinePropertyName =
 
 recordInlinePropertyNameString : P.Parser String
 recordInlinePropertyNameString =
-    -- TODO allow numeric name
     P.succeed ()
         |. P.chompWhile (U.neither3 U.isColon U.isComma U.isRecordEnd)
-        |. U.whitespace
         |> P.getChompedString
         |> P.map String.trim
 
@@ -581,7 +579,7 @@ recordInlineString =
     P.succeed ()
         |. P.chompWhile (U.neither U.isComma U.isRecordEnd)
         |> P.getChompedString
-        |> P.map Ast.fromString
+        |> P.map (Ast.fromString << String.trim)
 
 
 recordInlineNext : List Ast.Property -> Ast.Property -> P.Parser (P.Step (List Ast.Property) (List Ast.Property))
