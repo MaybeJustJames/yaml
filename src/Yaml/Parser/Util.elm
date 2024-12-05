@@ -1,5 +1,6 @@
 module Yaml.Parser.Util exposing
-    ( doubleQuotes
+    ( characters
+    , doubleQuotes
     , either
     , indented
     , isColon
