@@ -140,13 +140,13 @@ fromString string =
             Float_ (0 / 0)
 
         ( mult, ".inf" ) ->
-            Float_ (mult * 1 / 0)
+            Float_ (mult / 0)
 
         ( mult, ".Inf" ) ->
-            Float_ (mult * 1 / 0)
+            Float_ (mult / 0)
 
         ( mult, ".INF" ) ->
-            Float_ (mult * 1 / 0)
+            Float_ (mult / 0)
 
         _ ->
             case String.toInt trimmed of
@@ -233,7 +233,7 @@ fold f value z =
         Record_ r ->
             f value (List.foldl (fold f) z (Dict.values r))
 
-        Anchor_ nm a ->
+        Anchor_ _ a ->
             f value (fold f a z)
 
 

@@ -27,7 +27,7 @@ expectFail expected got =
 -}
 expectOneOf : List comparable -> comparable -> Expect.Expectation
 expectOneOf expected got =
-    if List.any (\x -> x == got) expected then
+    if List.member got expected then
         Expect.pass
 
     else

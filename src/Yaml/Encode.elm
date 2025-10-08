@@ -169,19 +169,16 @@ int i =
 float : Float -> Encoder
 float f =
     let
-        sign =
-            if f < 0 then
-                "-"
-
-            else
-                ""
-
         val =
             if isNaN f then
                 ".nan"
 
             else if isInfinite f then
-                sign ++ ".inf"
+                if f < 0 then
+                    "-.inf"
+
+                else
+                    ".inf"
 
             else
                 String.fromFloat f

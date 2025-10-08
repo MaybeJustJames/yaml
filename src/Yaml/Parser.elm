@@ -1,4 +1,4 @@
-module Yaml.Parser exposing (Value, fromString, parser, toString)
+module Yaml.Parser exposing (Value, fromString, parser)
 
 import Dict exposing (Dict)
 import Parser as P exposing ((|.), (|=))
@@ -12,12 +12,6 @@ import Yaml.Parser.Util as U
 {-| -}
 type alias Value =
     Ast.Value
-
-
-{-| -}
-toString : Value -> String
-toString =
-    Ast.toString
 
 
 
@@ -479,7 +473,7 @@ duplicatedPropertyKeysCheck properties =
         duplicates =
             duplicatedPropertyKeys properties
     in
-    if List.length duplicates == 0 then
+    if List.isEmpty duplicates then
         P.succeed properties
 
     else
