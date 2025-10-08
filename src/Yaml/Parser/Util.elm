@@ -28,6 +28,7 @@ module Yaml.Parser.Util exposing
     )
 
 import Parser as P exposing ((|.), (|=))
+import Parser.Workaround
 import Regex exposing (Regex)
 
 
@@ -180,7 +181,7 @@ whitespace =
 {-| -}
 comment : P.Parser ()
 comment =
-    P.lineComment "#"
+    Parser.Workaround.lineCommentBefore "#"
 
 
 
@@ -307,7 +308,7 @@ doubleQuotes =
 remaining : P.Parser String
 remaining =
     P.succeed ()
-        |. P.chompUntilEndOr "\n...\n"
+        |. Parser.Workaround.chompUntilEndOrBefore "\n...\n"
         |> P.getChompedString
 
 
