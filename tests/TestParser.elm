@@ -583,6 +583,17 @@ aaa: bbb"""
                     """
                 aaa: { key1: value1, key1: value2 }
                 """
+        , Test.test "multiline string at the end of file" <|
+            \_ ->
+                expectValue
+                    "key: |\n  indented string"
+                    -- important: this test is checking the _lack_ of final \n
+                    (Ast.Record_
+                        (Dict.fromList
+                            [ ( "key", Ast.String_ "indented string" )
+                            ]
+                        )
+                    )
 
         -- TODO: This is temporarily removed because it is a valid test case that should pass
         -- , Test.test "weird colon record" <|
