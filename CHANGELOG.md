@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Added support for literal multi-line string at the end of file ([#42](https://github.com/MaybeJustJames/yaml/pull/42) by [miniBill](https://github.com/miniBill))
 
 ## [2.1.5]
 ### Fixed
