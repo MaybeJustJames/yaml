@@ -200,23 +200,33 @@ multilineStep indent lines =
         multilineString lines_ =
             String.join "\n" (List.reverse lines_)
 
-        conclusion line emptyLineCount indent_ =
-            if indent_ > indent then
-                P.Loop
-                    ((line ++ String.repeat emptyLineCount "\n")
-                        :: lines
-                    )
+        conclusion line next =
+            case next of
+                Just ( emptyLineCount, indent_ ) ->
+                    if indent_ > indent then
+                        P.Loop
+                            ((line ++ String.repeat emptyLineCount "\n")
+                                :: lines
+                            )
 
-            else
-                P.Done (multilineString (line :: lines))
+                    else
+                        P.Done (multilineString (line :: lines))
+
+                Nothing ->
+                    P.Done (multilineString (line :: lines))
     in
     P.oneOf
         [ P.succeed conclusion
             |= characters (not << isNewLine)
-            |. P.chompIf isNewLine
-            |. spaces
-            |= emptyLines
-            |= P.getCol
+            |= P.oneOf
+                [ P.succeed (\e i -> Just ( e, i ))
+                    |. P.chompIf isNewLine
+                    |. spaces
+                    |= emptyLines
+                    |= P.getCol
+                , P.succeed Nothing
+                    |. P.end
+                ]
         , P.succeed (P.Done <| multilineString lines)
         ]
 
