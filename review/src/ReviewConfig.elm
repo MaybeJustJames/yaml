@@ -1,6 +1,7 @@
 module ReviewConfig exposing (config)
 
 import Docs.ReviewAtDocs
+import NoBrokenParserFunctions
 import NoConfusingPrefixOperator
 import NoDebug.Log
 import NoDebug.TodoOrToString
@@ -46,4 +47,5 @@ config =
     , NoUnused.Variables.rule
         |> Rule.ignoreErrorsForDirectories [ "tests/" ]
     , Simplify.rule (Simplify.defaults |> Simplify.expectNaN)
+    , NoBrokenParserFunctions.rule
     ]
