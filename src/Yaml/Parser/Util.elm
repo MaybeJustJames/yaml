@@ -1,12 +1,8 @@
 module Yaml.Parser.Util exposing
     ( doubleQuotes
-    , either
     , indented
     , isColon
     , isComma
-    , isDash
-    , isDot
-    , isHash
     , isListEnd
     , isListStart
     , isNewLine
@@ -17,7 +13,6 @@ module Yaml.Parser.Util exposing
     , neither
     , neither3
     , postProcessFoldedString
-    , postProcessLiteralString
     , postProcessString
     , remaining
     , singleQuotes
@@ -46,24 +41,6 @@ isColon =
 isComma : Char -> Bool
 isComma =
     is ','
-
-
-{-| -}
-isDot : Char -> Bool
-isDot =
-    is '.'
-
-
-{-| -}
-isDash : Char -> Bool
-isDash =
-    is '-'
-
-
-{-| -}
-isHash : Char -> Bool
-isHash =
-    is '#'
 
 
 {-| -}
@@ -112,12 +89,6 @@ isSingleQuote =
 isDoubleQuote : Char -> Bool
 isDoubleQuote =
     is '"'
-
-
-{-| -}
-either : (Char -> Bool) -> (Char -> Bool) -> Char -> Bool
-either f1 f2 char =
-    f1 char || f2 char
 
 
 {-| -}
