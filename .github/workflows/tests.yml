@@ -17,3 +17,5 @@ jobs:
       run: elm make --docs=docs.json
     - name: Verify documentation
       run: npx elm-verify-examples --run-tests
+    - name: elm-review
+      run: npx elm-review
