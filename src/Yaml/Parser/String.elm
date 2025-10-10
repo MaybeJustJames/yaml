@@ -9,6 +9,7 @@ import Yaml.Parser.Util as U
 exceptions : P.Parser Ast.Value
 exceptions =
     let
+        dashed : String -> String
         dashed s =
             "---" ++ s
     in

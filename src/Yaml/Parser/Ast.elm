@@ -29,6 +29,7 @@ type alias Property =
 fromString : String -> Value
 fromString string =
     let
+        trimmed : String
         trimmed =
             String.trim string
 

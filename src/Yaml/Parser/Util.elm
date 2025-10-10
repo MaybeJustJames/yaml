@@ -164,6 +164,7 @@ spaces =
 whitespace : P.Parser ()
 whitespace =
     let
+        step : a -> P.Parser (P.Step () ())
         step _ =
             P.oneOf
                 [ P.succeed (P.Loop ())
@@ -201,6 +202,7 @@ multilineStep indent lines =
         multilineString lines_ =
             String.join "\n" (List.reverse lines_)
 
+        conclusion : String -> Maybe ( Int, Int ) -> P.Step (List String) String
         conclusion line next =
             case next of
                 Just ( emptyLineCount, indent_ ) ->
@@ -251,17 +253,20 @@ emptyLinesStep count =
 characters : (Char -> Bool) -> P.Parser String
 characters isOk =
     let
+        done : List String -> P.Step state String
         done chars =
             chars
                 |> List.reverse
                 |> String.concat
                 |> P.Done
 
+        more : List b -> b -> P.Step (List b) a
         more chars char =
             char
                 :: chars
                 |> P.Loop
 
+        step : List String -> P.Parser (P.Step (List String) String)
         step chars =
             P.oneOf
                 [ P.succeed (done chars)
@@ -354,6 +359,7 @@ postProcessLiteralString str =
     case String.left 2 str of
         "|\n" ->
             let
+                content : String
                 content =
                     String.dropLeft 2 str
             in
@@ -405,6 +411,7 @@ countLeadingSpacesInString str =
 indented : Int -> { smaller : P.Parser a, exactly : P.Parser a, larger : Int -> P.Parser a, ending : P.Parser a } -> P.Parser a
 indented indent next =
     let
+        check : Int -> P.Parser a
         check actual =
             P.oneOf
                 [ P.andThen (\_ -> next.ending) P.end
