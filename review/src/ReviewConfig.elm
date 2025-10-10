@@ -1,6 +1,9 @@
 module ReviewConfig exposing (config)
 
+import Docs.NoMissing exposing (exposedModules, onlyExposed)
 import Docs.ReviewAtDocs
+import Docs.ReviewLinksAndSections
+import Docs.UpToDateReadmeLinks
 import NoBrokenParserFunctions
 import NoConfusingPrefixOperator
 import NoDebug.Log
@@ -25,7 +28,13 @@ import Simplify
 
 config : List Rule
 config =
-    [ Docs.ReviewAtDocs.rule
+    [ Docs.NoMissing.rule
+        { document = onlyExposed
+        , from = exposedModules
+        }
+    , Docs.ReviewLinksAndSections.rule
+        |> Rule.ignoreErrorsForFiles [ "README.md" ]
+    , Docs.ReviewAtDocs.rule
     , NoConfusingPrefixOperator.rule
     , NoDebug.Log.rule
     , NoDebug.TodoOrToString.rule
