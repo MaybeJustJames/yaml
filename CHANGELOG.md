@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.1.6]
 ### Fixed
 - Added support for literal multi-line string at the end of file ([#42](https://github.com/MaybeJustJames/yaml/pull/42) by [miniBill](https://github.com/miniBill))
 
@@ -68,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Some small documentation issues and typos
 
-[Unreleased]: https://github.com/MaybeJustJames/yaml/compare/2.1.5...HEAD
+[Unreleased]: https://github.com/MaybeJustJames/yaml/compare/2.1.6...HEAD
+[2.1.6]: https://github.com/MaybeJustJames/yaml/compare/2.1.5...2.1.6
 [2.1.5]: https://github.com/MaybeJustJames/yaml/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/MaybeJustJames/yaml/compare/2.1.3...2.1.4
 [2.1.3]: https://github.com/MaybeJustJames/yaml/compare/2.1.2...2.1.3

@@ -3,7 +3,7 @@
     "name": "MaybeJustJames/yaml",
     "summary": "Work with YAML in Elm",
     "license": "BSD-3-Clause",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "exposed-modules": [
         "Yaml.Decode",
         "Yaml.Encode"
