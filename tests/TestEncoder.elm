@@ -2,7 +2,7 @@ module TestEncoder exposing (suite)
 
 import Dict
 import Expect
-import Format exposing (formatFloat, formatFloatOutput)
+import Format exposing (formatFloatOutput)
 import Fuzz exposing (bool, float, int, list, map2, string)
 import Test
 import Yaml.Decode as Decode
@@ -323,12 +323,11 @@ suite =
                     let
                         boolToString : Bool -> String
                         boolToString b =
-                            case b of
-                                True ->
-                                    "true"
+                            if b then
+                                "true"
 
-                                False ->
-                                    "false"
+                            else
+                                "false"
                     in
                     Expect.equal
                         ("{x: "

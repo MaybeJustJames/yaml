@@ -169,19 +169,17 @@ int i =
 float : Float -> Encoder
 float f =
     let
-        sign =
-            if f < 0 then
-                "-"
-
-            else
-                ""
-
+        val : String
         val =
             if isNaN f then
                 ".nan"
 
             else if isInfinite f then
-                sign ++ ".inf"
+                if f < 0 then
+                    "-.inf"
+
+                else
+                    ".inf"
 
             else
                 String.fromFloat f
@@ -374,6 +372,7 @@ encodeDict key val state r =
         recordElement : ( k, v ) -> String
         recordElement ( key_, val_ ) =
             let
+                newState : EncoderState
                 newState =
                     { state | inRecord = True, col = state.col + state.indent }
             in
@@ -438,9 +437,11 @@ encodeRecord state r =
         recordElement : ( String, Encoder ) -> String
         recordElement ( key, val ) =
             let
+                newState : EncoderState
                 newState =
                     { state | inRecord = True, col = state.col + state.indent }
 
+                encodedValue : String
                 encodedValue =
                     internalConvertToString newState val
             in
