@@ -1,5 +1,7 @@
 # YAML in Elm
 
+This is for demo purposes.
+
 [![Tests Actions Status](https://github.com/MaybeJustJames/yaml/workflows/Tests/badge.svg)](https://github.com/MaybeJustJames/yaml/actions/) [![Elm package](https://img.shields.io/elm-package/v/MaybeJustJames/yaml.svg)](https://package.elm-lang.org/packages/MaybeJustJames/yaml/latest/)
 
 Convert between type-safe Elm values and [YAML](https://yaml.org).
