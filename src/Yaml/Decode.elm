@@ -1023,6 +1023,7 @@ fromMaybe err mby =
 singleResult : List (Result Error a) -> Result Error (List a)
 singleResult =
     let
+        each : Result error value -> Result error (List value) -> Result error (List value)
         each v r =
             case r of
                 Err _ ->

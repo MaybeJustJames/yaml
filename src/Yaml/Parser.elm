@@ -122,6 +122,7 @@ value =
 list : Int -> P.Parser Ast.Value
 list indent =
     let
+        confirmed : Ast.Value -> P.Parser Ast.Value
         confirmed value_ =
             P.succeed Ast.List_
                 |= P.loop [ value_ ] (listStep indent)
@@ -133,9 +134,11 @@ list indent =
 listStep : Int -> List Ast.Value -> P.Parser (P.Step (List Ast.Value) (List Ast.Value))
 listStep indent values =
     let
+        finish : P.Step state (List Ast.Value)
         finish =
             P.Done (List.reverse values)
 
+        next : Ast.Value -> P.Step (List Ast.Value) a
         next value_ =
             P.Loop (value_ :: values)
     in
@@ -291,6 +294,7 @@ listInlineOnDone elements element =
 recordOrString : Int -> Int -> P.Parser Ast.Value
 recordOrString indent indent_ =
     let
+        withString : String -> P.Parser Ast.Value
         withString string =
             P.oneOf
                 [ P.succeed (Ast.fromString string)
@@ -305,9 +309,11 @@ recordOrString indent indent_ =
                        )
                 ]
 
+        addRemaining : String -> String -> Ast.Value
         addRemaining string remaining =
             Ast.fromString <| U.postProcessString (removeComment string ++ remaining)
 
+        removeComment : String -> String
         removeComment string =
             string
                 |> String.split "#"
@@ -331,6 +337,7 @@ recordOrString indent indent_ =
 quotedString : Int -> P.Parser Ast.Value
 quotedString indent =
     let
+        withQuote : String -> P.Parser Ast.Value
         withQuote quote =
             P.oneOf
                 [ recordProperty indent quote
@@ -357,6 +364,7 @@ recordProperty indent name =
 record : Int -> String -> P.Parser Ast.Value
 record indent property =
     let
+        confirmed : Ast.Value -> P.Parser Ast.Value
         confirmed value_ =
             P.succeed identity
                 |= P.loop [ ( property, value_ ) ] (recordStep indent)
@@ -370,9 +378,11 @@ record indent property =
 recordStep : Int -> List Ast.Property -> P.Parser (P.Step (List Ast.Property) (List Ast.Property))
 recordStep indent values =
     let
+        finish : P.Step state (List Ast.Property)
         finish =
             P.Done (List.reverse values)
 
+        next : Ast.Property -> P.Step (List Ast.Property) a
         next value_ =
             P.Loop (value_ :: values)
     in
@@ -393,6 +403,7 @@ recordStep indent values =
 recordElement : Int -> P.Parser Ast.Property
 recordElement indent =
     let
+        property : P.Parser String
         property =
             P.oneOf
                 [ U.singleQuotes
@@ -556,6 +567,7 @@ recordInlinePropertyNameString =
 recordInlinePropertyValue : P.Parser Ast.Value
 recordInlinePropertyValue =
     let
+        propVal : P.Parser Ast.Value
         propVal =
             P.oneOf
                 [ listInline
