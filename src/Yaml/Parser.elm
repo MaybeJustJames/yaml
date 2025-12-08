@@ -265,8 +265,14 @@ listInlineString =
 listInlineNext : List Ast.Value -> Ast.Value -> P.Parser (P.Step (List Ast.Value) (List Ast.Value))
 listInlineNext elements element =
     P.oneOf
-        [ P.succeed (listInlineOnMore elements element)
-            |. P.chompIf U.isComma
+        [ P.succeed identity
+            |. P.symbol ","
+            |. U.whitespace
+            |= P.oneOf
+                [ P.succeed (listInlineOnDone elements element)
+                    |. P.symbol "]"
+                , P.succeed (listInlineOnMore elements element)
+                ]
         , P.succeed (listInlineOnDone elements element)
             |. P.chompIf U.isListEnd
         ]
