@@ -622,8 +622,11 @@ expectValue subject expected =
         ( Ok (Ast.Float_ got), Ast.Float_ want ) ->
             expectCloseTo got want
 
-        ( got, _ ) ->
-            Expect.equal got (Ok expected)
+        ( Ok got, _ ) ->
+            Expect.equal got expected
+
+        ( Err err, _ ) ->
+            Expect.fail err
 
 
 expectErr : String -> Expect.Expectation
