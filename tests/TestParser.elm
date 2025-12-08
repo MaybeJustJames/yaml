@@ -197,6 +197,14 @@ suite =
            ccc 
            ]""" <|
                     Ast.List_ [ Ast.String_ "aaa", Ast.String_ "bbb", Ast.String_ "ccc ccc\n           ccc" ]
+        , Test.test "an inline list with a trailing comma" <|
+            \_ ->
+                expectValue "[ aaa, bbb, ]" <|
+                    Ast.List_ [ Ast.String_ "aaa", Ast.String_ "bbb" ]
+        , Test.test "an inline list with a trailing explicit null" <|
+            \_ ->
+                expectValue "[ aaa, bbb, null ]" <|
+                    Ast.List_ [ Ast.String_ "aaa", Ast.String_ "bbb", Ast.Null_ ]
         , Test.test "an inline list with an inline list inside" <|
             \_ ->
                 expectValue "[ aaa, [ bbb, aaa, ccc ], ccc ]" <|
